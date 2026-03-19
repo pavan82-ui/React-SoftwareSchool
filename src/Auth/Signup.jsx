@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import axios from 'axios'
 
 function Signup() {
   const [apiError, setApiError] = useState('')
@@ -36,11 +35,25 @@ function Signup() {
         email: values.email,
         password: values.password,
       }
+
       try {
-        await axios.post('https://api.softwareschool.co/auth/signup', apiInputData)
+        const response = await fetch('https://api.softwareschool.co/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(apiInputData),
+        })
+
+        const responseData = await response.json()
+
+        if (!response.ok) {
+          throw new Error(responseData?.message || 'Signup failed. Please try again.')
+        }
+
         setSuccessMsg('Account created successfully!')
       } catch (err) {
-        setApiError(err?.response?.data?.message || 'Signup failed. Please try again.')
+        setApiError(err?.message || 'Signup failed. Please try again.')
       } finally {
         setSubmitting(false)
       }
