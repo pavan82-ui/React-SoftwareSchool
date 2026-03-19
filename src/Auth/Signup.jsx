@@ -1,25 +1,49 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import axios from 'axios'
 
 function Signup() {
+  const [apiError, setApiError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+
   const formik = useFormik({
     initialValues: {
       fullName: '',
+      mobile: '',
       email: '',
       password: '',
       confirmPassword: '',
     },
     validationSchema: Yup.object({
       fullName: Yup.string().required('Full name is required'),
+      mobile: Yup.string()
+        .matches(/^[0-9]{10,15}$/, 'Enter a valid mobile number')
+        .required('Mobile number is required'),
       email: Yup.string().email('Enter a valid email').required('Email is required'),
       password: Yup.string().required('Password is required'),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('password')], 'Passwords must match')
         .required('Confirm password is required'),
     }),
-    onSubmit: (values) => {
-      console.log('Signup submitted:', values)
+    onSubmit: async (values, { setSubmitting }) => {
+      setApiError('')
+      setSuccessMsg('')
+      const apiInputData = {
+        name: values.fullName,
+        mobile: values.mobile,
+        email: values.email,
+        password: values.password,
+      }
+      try {
+        await axios.post('https://api.softwareschool.co/auth/signup', apiInputData)
+        setSuccessMsg('Account created successfully!')
+      } catch (err) {
+        setApiError(err?.response?.data?.message || 'Signup failed. Please try again.')
+      } finally {
+        setSubmitting(false)
+      }
     },
   })
 
@@ -30,6 +54,9 @@ function Signup() {
           <div className="card shadow-sm border-0">
             <div className="card-body p-4">
               <h1 className="h4 mb-3">Sign Up</h1>
+
+              {apiError && <div className="alert alert-danger py-2">{apiError}</div>}
+              {successMsg && <div className="alert alert-success py-2">{successMsg}</div>}
 
               <form onSubmit={formik.handleSubmit} noValidate>
                 <div className="mb-3">
@@ -50,6 +77,27 @@ function Signup() {
                   />
                   {formik.touched.fullName && formik.errors.fullName ? (
                     <div className="invalid-feedback">{formik.errors.fullName}</div>
+                  ) : null}
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="signupMobile" className="form-label">
+                    Mobile Number
+                  </label>
+                  <input
+                    name="mobile"
+                    id="signupMobile"
+                    type="tel"
+                    className={`form-control ${
+                      formik.touched.mobile && formik.errors.mobile ? 'is-invalid' : ''
+                    }`}
+                    placeholder="e.g. 9876543210"
+                    value={formik.values.mobile}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.mobile && formik.errors.mobile ? (
+                    <div className="invalid-feedback">{formik.errors.mobile}</div>
                   ) : null}
                 </div>
 
@@ -116,8 +164,12 @@ function Signup() {
                   ) : null}
                 </div>
 
-                <button type="submit" className="btn btn-success w-100 mb-3">
-                  Create Account
+                <button
+                  type="submit"
+                  className="btn btn-success w-100 mb-3"
+                  disabled={formik.isSubmitting}
+                >
+                  {formik.isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </button>
 
                 <p className="small text-center mb-0">
