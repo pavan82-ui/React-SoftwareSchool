@@ -9,7 +9,7 @@ function ProductsList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [toggledStars, setToggledStars] = useState(new Set())
-  const { addToCart, removeFromCart, cartItems } = useCart()
+  const { addToCart, removeFromCart, saveForLater, removeFromSaved, cartItems, savedItems } = useCart()
 
   useEffect(() => {
     getProductsList()
@@ -62,6 +62,10 @@ function ProductsList() {
     return cartItems.some((item) => item.id === productId)
   }
 
+  function isProductSaved(productId) {
+    return savedItems.some((item) => item.id === productId)
+  }
+
   return (
     <>
       <Header />
@@ -88,6 +92,7 @@ function ProductsList() {
           <div className="row g-4">
             {products.map((product) => {
               const inCart = isProductInCart(product.id)
+              const inSaved = isProductSaved(product.id)
 
               return (
                 <div key={product.id} className="col-12 col-md-6 col-lg-4">
@@ -140,6 +145,18 @@ function ProductsList() {
                       >
                         {inCart ? 'Remove from Cart' : 'Add to Cart'}
                       </button>
+                      <button
+                        className={`btn btn-sm w-100 ${inSaved ? 'btn-outline-danger' : 'btn-outline-secondary'}`}
+                        onClick={() => {
+                          if (inSaved) {
+                            removeFromSaved(product.id)
+                          } else {
+                            saveForLater(product)
+                          }
+                        }}
+                      >
+                        {inSaved ? 'Remove Saved Item' : 'Save for Later'}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -160,5 +177,6 @@ function ProductsList() {
 }
 
 export default ProductsList
+
 
 

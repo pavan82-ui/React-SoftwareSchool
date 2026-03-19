@@ -10,7 +10,7 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [cartMessage, setCartMessage] = useState('')
-  const { addToCart, removeFromCart, cartItems } = useCart()
+  const { addToCart, removeFromCart, saveForLater, removeFromSaved, cartItems, savedItems } = useCart()
 
   useEffect(() => {
     getSingleProductData()
@@ -58,6 +58,7 @@ function ProductDetail() {
   }
 
   const inCart = cartItems.some((item) => item.id === product.id)
+  const inSaved = savedItems.some((item) => item.id === product.id)
 
   return (
     <>
@@ -174,8 +175,19 @@ function ProductDetail() {
               >
                 {product.stock > 0 ? (inCart ? 'Remove from Cart' : 'Add to Cart') : 'Out of Stock'}
               </button>
-              <button className="btn btn-outline-secondary btn-lg">
-                Save for Later
+              <button
+                className={`btn btn-lg ${inSaved ? 'btn-outline-danger' : 'btn-outline-secondary'}`}
+                onClick={() => {
+                  if (inSaved) {
+                    removeFromSaved(product.id)
+                    setCartMessage('Removed from saved items')
+                  } else {
+                    saveForLater(product)
+                    setCartMessage('Product saved for later')
+                  }
+                }}
+              >
+                {inSaved ? 'Remove Saved Item' : 'Save for Later'}
               </button>
             </div>
             {cartMessage ? <div className="alert alert-success mt-3 mb-0">{cartMessage}</div> : null}

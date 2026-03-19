@@ -3,7 +3,16 @@ import Footer from '../Shared/Footer.jsx'
 import { useCart } from '../Context/CartContext.jsx'
 
 function CartPage() {
-  const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart()
+  const {
+    cartItems,
+    savedItems,
+    cartTotal,
+    updateQuantity,
+    removeFromCart,
+    moveSavedToCart,
+    removeFromSaved,
+    clearCart,
+  } = useCart()
 
   return (
     <>
@@ -94,6 +103,60 @@ function CartPage() {
             </div>
           </>
         )}
+
+        <div className="mt-5">
+          <h2 className="h5 mb-3">Saved for Later</h2>
+          {savedItems.length === 0 ? (
+            <div className="alert alert-secondary mb-0">No saved items yet.</div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th className="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {savedItems.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        <div className="d-flex align-items-center gap-3">
+                          <img
+                            src={item.thumbnail}
+                            alt={item.title}
+                            width="56"
+                            height="56"
+                            style={{ objectFit: 'contain', backgroundColor: '#f8f9fa' }}
+                          />
+                          <span>{item.title}</span>
+                        </div>
+                      </td>
+                      <td>${item.price}</td>
+                      <td className="text-end">
+                        <div className="btn-group btn-group-sm" role="group">
+                          <button
+                            className="btn btn-outline-primary"
+                            onClick={() => moveSavedToCart(item.id)}
+                          >
+                            Move to Cart
+                          </button>
+                          <button
+                            className="btn btn-outline-danger"
+                            onClick={() => removeFromSaved(item.id)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </main>
       <Footer />
     </>

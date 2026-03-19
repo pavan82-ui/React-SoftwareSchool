@@ -15,10 +15,26 @@ function CartProvider({ children }) {
       return []
     }
   })
+  const [savedItems, setSavedItems] = useState(() => {
+    const savedForLater = localStorage.getItem('savedItems')
+    if (!savedForLater) {
+      return []
+    }
+
+    try {
+      return JSON.parse(savedForLater)
+    } catch {
+      return []
+    }
+  })
 
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
   }, [cartItems])
+
+  useEffect(() => {
+    localStorage.setItem('savedItems', JSON.stringify(savedItems))
+  }, [savedItems])
 
   function addToCart(product) {
     setCartItems((prevItems) => {
@@ -60,6 +76,41 @@ function CartProvider({ children }) {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId))
   }
 
+  function saveForLater(product) {
+    setSavedItems((prevItems) => {
+      const exists = prevItems.some((item) => item.id === product.id)
+      if (exists) {
+        return prevItems
+      }
+
+      return [
+        ...prevItems,
+        {
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          thumbnail: product.thumbnail,
+        },
+      ]
+    })
+
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== product.id))
+  }
+
+  function removeFromSaved(productId) {
+    setSavedItems((prevItems) => prevItems.filter((item) => item.id !== productId))
+  }
+
+  function moveSavedToCart(productId) {
+    const savedProduct = savedItems.find((item) => item.id === productId)
+    if (!savedProduct) {
+      return
+    }
+
+    addToCart(savedProduct)
+    removeFromSaved(productId)
+  }
+
   function clearCart() {
     setCartItems([])
   }
@@ -76,11 +127,15 @@ function CartProvider({ children }) {
 
   const value = {
     cartItems,
+    savedItems,
     cartCount,
     cartTotal,
     addToCart,
     updateQuantity,
     removeFromCart,
+    saveForLater,
+    removeFromSaved,
+    moveSavedToCart,
     clearCart,
   }
 

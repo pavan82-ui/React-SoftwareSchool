@@ -4,7 +4,7 @@ import { useCart } from '../Context/CartContext.jsx'
 
 function Header() {
   const [isNavShowing, setIsNavShowing] = useState(false)
-  const { cartCount } = useCart()
+  const { cartCount, savedItems } = useCart()
 
   function handleNavToggle() {
     setIsNavShowing(!isNavShowing)
@@ -54,6 +54,14 @@ function Header() {
                 ) : null}
               </Link>
             </li>
+            {savedItems.length > 0 ? (
+              <li className="nav-item">
+                <Link to="/saved-items" className="nav-link">
+                  Saved
+                  <span className="badge bg-info text-dark ms-2">{savedItems.length}</span>
+                </Link>
+              </li>
+            ) : null}
             <li className="nav-item">
               <a href="#courses" className="nav-link">
                 Courses

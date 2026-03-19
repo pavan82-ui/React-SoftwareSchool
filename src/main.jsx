@@ -11,6 +11,7 @@ import ProductsList from './Products/ProductsList.jsx'
 import ProductDetail from './Products/ProductDetail.jsx'
 import UpdateProfile from './Profile/UpdateProfile.jsx'
 import CartPage from './Cart/CartPage.jsx'
+import SavedItemsPage from './Cart/SavedItemsPage.jsx'
 import UsersPage from './Users/UsersPage.jsx'
 import { CartProvider } from './Context/CartContext.jsx'
 
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/saved-items" element={<SavedItemsPage />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>
       </BrowserRouter>
