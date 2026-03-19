@@ -1,16 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
 import Login from './Login.jsx'
+import SignUp from './Signup.jsx'
 
 function App() {
- 
   return (
-    <>
-     <Login></Login>
-    </>
+    <main className="container py-5">
+      <div className="row g-4">
+        <div className="col-12 col-md-6">
+          <Login />
+        </div>
+        <div className="col-12 col-md-6">
+          <SignUp />
+        </div>
+      </div>
+    </main>
   )
 }
 
