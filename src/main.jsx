@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -13,11 +14,11 @@ import UpdateProfile from './Profile/UpdateProfile.jsx'
 import CartPage from './Cart/CartPage.jsx'
 import SavedItemsPage from './Cart/SavedItemsPage.jsx'
 import UsersPage from './Users/UsersPage.jsx'
-import { CartProvider } from './Context/CartContext.jsx'
+import store from './redux/store'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CartProvider>
+    <Provider store={store}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -32,6 +33,6 @@ createRoot(document.getElementById('root')).render(
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>
       </BrowserRouter>
-    </CartProvider>
+    </Provider>
   </StrictMode>,
 )

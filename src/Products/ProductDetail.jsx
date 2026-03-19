@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import Header from '../Shared/Header.jsx'
 import Footer from '../Shared/Footer.jsx'
-import { useCart } from '../Context/CartContext.jsx'
+import { addToCart, removeFromCart, saveForLater, removeFromSaved } from '../redux/cartSlice'
 
 function ProductDetail() {
   const { id } = useParams()
@@ -10,7 +11,9 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [cartMessage, setCartMessage] = useState('')
-  const { addToCart, removeFromCart, saveForLater, removeFromSaved, cartItems, savedItems } = useCart()
+  const dispatch = useDispatch()
+  const cartItems = useSelector((state) => state.cart.cartItems)
+  const savedItems = useSelector((state) => state.cart.savedItems)
 
   useEffect(() => {
     getSingleProductData()
@@ -165,10 +168,10 @@ function ProductDetail() {
                 disabled={product.stock === 0}
                 onClick={() => {
                   if (inCart) {
-                    removeFromCart(product.id)
+                    dispatch(removeFromCart(product.id))
                     setCartMessage('Product removed from cart')
                   } else {
-                    addToCart(product)
+                    dispatch(addToCart(product))
                     setCartMessage('Product added to cart')
                   }
                 }}
@@ -179,10 +182,10 @@ function ProductDetail() {
                 className={`btn btn-lg ${inSaved ? 'btn-outline-danger' : 'btn-outline-secondary'}`}
                 onClick={() => {
                   if (inSaved) {
-                    removeFromSaved(product.id)
+                    dispatch(removeFromSaved(product.id))
                     setCartMessage('Removed from saved items')
                   } else {
-                    saveForLater(product)
+                    dispatch(saveForLater(product))
                     setCartMessage('Product saved for later')
                   }
                 }}

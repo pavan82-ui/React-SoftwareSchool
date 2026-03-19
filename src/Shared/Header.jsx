@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { useCart } from '../Context/CartContext.jsx'
 
 function Header() {
   const [isNavShowing, setIsNavShowing] = useState(false)
-  const { cartCount, savedItems } = useCart()
+  const cartCount = useSelector((state) =>
+    state.cart.cartItems.reduce((sum, item) => sum + item.quantity, 0),
+  )
+  const savedItems = useSelector((state) => state.cart.savedItems)
 
   function handleNavToggle() {
     setIsNavShowing(!isNavShowing)

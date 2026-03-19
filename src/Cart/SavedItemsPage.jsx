@@ -1,9 +1,11 @@
+import { useDispatch, useSelector } from 'react-redux'
 import Header from '../Shared/Header.jsx'
 import Footer from '../Shared/Footer.jsx'
-import { useCart } from '../Context/CartContext.jsx'
+import { moveSavedToCart, removeFromSaved } from '../redux/cartSlice'
 
 function SavedItemsPage() {
-  const { savedItems, moveSavedToCart, removeFromSaved } = useCart()
+  const dispatch = useDispatch()
+  const savedItems = useSelector((state) => state.cart.savedItems)
 
   return (
     <>
@@ -46,13 +48,13 @@ function SavedItemsPage() {
                       <div className="btn-group btn-group-sm" role="group">
                         <button
                           className="btn btn-outline-primary"
-                          onClick={() => moveSavedToCart(item.id)}
+                          onClick={() => dispatch(moveSavedToCart(item.id))}
                         >
                           Move to Cart
                         </button>
                         <button
                           className="btn btn-outline-danger"
-                          onClick={() => removeFromSaved(item.id)}
+                          onClick={() => dispatch(removeFromSaved(item.id))}
                         >
                           Remove
                         </button>

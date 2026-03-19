@@ -1,18 +1,21 @@
+import { useDispatch, useSelector } from 'react-redux'
 import Header from '../Shared/Header.jsx'
 import Footer from '../Shared/Footer.jsx'
-import { useCart } from '../Context/CartContext.jsx'
+import {
+  updateQuantity,
+  removeFromCart,
+  moveSavedToCart,
+  removeFromSaved,
+  clearCart,
+} from '../redux/cartSlice'
 
 function CartPage() {
-  const {
-    cartItems,
-    savedItems,
-    cartTotal,
-    updateQuantity,
-    removeFromCart,
-    moveSavedToCart,
-    removeFromSaved,
-    clearCart,
-  } = useCart()
+  const dispatch = useDispatch()
+  const cartItems = useSelector((state) => state.cart.cartItems)
+  const savedItems = useSelector((state) => state.cart.savedItems)
+  const cartTotal = useSelector((state) =>
+    state.cart.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+  )
 
   return (
     <>
@@ -21,7 +24,7 @@ function CartPage() {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="h3 mb-0">Cart</h1>
           {cartItems.length > 0 && (
-            <button className="btn btn-outline-danger btn-sm" onClick={clearCart}>
+            <button className="btn btn-outline-danger btn-sm" onClick={() => dispatch(clearCart())}>
               Clear Cart
             </button>
           )}
@@ -62,7 +65,7 @@ function CartPage() {
                         <div className="btn-group" role="group" aria-label="Quantity controls">
                           <button
                             className="btn btn-outline-secondary btn-sm"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => dispatch(updateQuantity({ productId: item.id, nextQuantity: item.quantity - 1 }))}
                           >
                             -
                           </button>
@@ -71,7 +74,7 @@ function CartPage() {
                           </button>
                           <button
                             className="btn btn-outline-secondary btn-sm"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => dispatch(updateQuantity({ productId: item.id, nextQuantity: item.quantity + 1 }))}
                           >
                             +
                           </button>
@@ -81,7 +84,7 @@ function CartPage() {
                       <td>
                         <button
                           className="btn btn-sm btn-danger"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => dispatch(removeFromCart(item.id))}
                         >
                           Remove
                         </button>
@@ -138,13 +141,13 @@ function CartPage() {
                         <div className="btn-group btn-group-sm" role="group">
                           <button
                             className="btn btn-outline-primary"
-                            onClick={() => moveSavedToCart(item.id)}
+                            onClick={() => dispatch(moveSavedToCart(item.id))}
                           >
                             Move to Cart
                           </button>
                           <button
                             className="btn btn-outline-danger"
-                            onClick={() => removeFromSaved(item.id)}
+                            onClick={() => dispatch(removeFromSaved(item.id))}
                           >
                             Remove
                           </button>
