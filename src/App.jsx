@@ -4,13 +4,20 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 import Login from './Login.jsx'
+import { CartProvider } from './CartContext'
+import ProductList from './ProductList'
+import Cart from './Cart'
 
 function App() {
- 
+
   return (
-    <>
-     <Login></Login>
-    </>
+    <CartProvider>
+      <div className="app">
+        <h1>Shopping App</h1>
+        <ProductList />
+        <Cart />
+      </div>
+    </CartProvider>
   )
 }
 
